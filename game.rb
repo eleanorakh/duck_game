@@ -1,5 +1,5 @@
 class Game
-  DEFAULT_HEALTH = 5
+  DEFAULT_HEALTH = 50
   DEFAULT_LOCATION = [0,0]
   INVENTORY_WIDTH = 2
   #   0 1 2
@@ -76,10 +76,39 @@ class Game
     puts "You are at #{@current_location}."
     puts @map.fetch(@current_location).description
 
+    # If shop then show shop menu
     if @map.fetch(@current_location).breadcrumbs
       @inventory << :breadcrumb
     end
 
+    if @map.fetch(@current_location).shop
+      shop
+    end
+
+  end
+
+  def shop
+    puts "We have lettuce for sale. One breadcrumb per leaf. Would you like to buy some? [y/n]"
+    print ":"
+    input = gets.strip
+    case input
+    when "y"
+      if @inventory.include?(:breadcrumb)
+        # delete one breadcrumb
+        index_to_delete = @inventory.index(:breadcrumb)
+        @inventory.delete_at(index_to_delete)
+
+        @inventory << :lettuce
+        puts "You have purchased lettuce"
+      else
+        puts "You have no breadcrumbs! Better keep searching."
+      end
+    when "n"
+      puts "You don't want lettuce"
+    else
+      puts "That's not a vaild command! You're addled!"
+      shop
+    end
   end
 
   def update_coordinates(current, bearing)
