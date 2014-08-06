@@ -81,14 +81,14 @@ class Game
       @inventory << :breadcrumb
     end
 
-    if @map.fetch(@current_location).shop
+    unless @map.fetch(@current_location).shop.empty?
       shop
     end
 
   end
 
   def shop
-    puts "We have lettuce for sale. One breadcrumb per leaf. Would you like to buy some? [y/n]"
+    puts "We have #{@map.fetch(@current_location).shop.count} lettuce for sale. One breadcrumb per leaf. Would you like to buy some? [y/n]"
     print ":"
     input = gets.strip
     case input
@@ -97,6 +97,9 @@ class Game
         # delete one breadcrumb
         index_to_delete = @inventory.index(:breadcrumb)
         @inventory.delete_at(index_to_delete)
+
+        index_to_delete = @map.fetch(@current_location).shop.index(:lettuce)
+        @map.fetch(@current_location).shop.delete_at(index_to_delete)
 
         @inventory << :lettuce
         puts "You have purchased lettuce"
@@ -132,3 +135,6 @@ class Game
     @inventory_size/INVENTORY_WIDTH
   end
 end
+
+# show how many lettuce available
+# remove lettuce from Location when purchased
