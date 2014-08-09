@@ -74,21 +74,21 @@ class Game
     end
 
     puts "You are at #{@current_location}."
-    puts @map.fetch(@current_location).description
+    puts current_location_object.description
 
     # If shop then show shop menu
-    if @map.fetch(@current_location).breadcrumbs
+    if current_location_object.breadcrumbs
       @inventory << :breadcrumb
     end
 
-    unless @map.fetch(@current_location).shop.empty?
+    if current_location_object.shop?
       shop
     end
 
   end
 
   def shop
-    puts "We have #{@map.fetch(@current_location).shop.count} lettuce for sale. One breadcrumb per leaf. Would you like to buy some? [y/n]"
+    puts "We have #{current_location_object.shop_inventory.count} lettuce for sale. One breadcrumb per leaf. Would you like to buy some? [y/n]"
     print ":"
     input = gets.strip
     case input
@@ -98,8 +98,8 @@ class Game
         index_to_delete = @inventory.index(:breadcrumb)
         @inventory.delete_at(index_to_delete)
 
-        index_to_delete = @map.fetch(@current_location).shop.index(:lettuce)
-        @map.fetch(@current_location).shop.delete_at(index_to_delete)
+        index_to_delete = current_location_object.shop_inventory.index(:lettuce)
+        current_location_object.shop_inventory.delete_at(index_to_delete)
 
         @inventory << :lettuce
         puts "You have purchased lettuce"
@@ -133,6 +133,10 @@ class Game
 
   def inventory_height
     @inventory_size/INVENTORY_WIDTH
+  end
+
+  def current_location_object
+    @map.fetch(@current_location)
   end
 end
 
