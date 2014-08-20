@@ -16,13 +16,23 @@ class Game
   end
 
   def run
-    puts "You're a fancy looking duck, what is your name?"
-    @name = gets.strip
+    set_name
 
     loop do
-      menu
-      puts
+      break if @exit
+      tick
     end
+  end
+
+  def set_name
+    puts "You're a fancy looking duck, what is your name?"
+    @name = gets.strip
+    puts "Hi #{@name}"
+  end
+
+  def tick
+    menu
+    puts nil
   end
 
   def menu
@@ -31,6 +41,8 @@ class Game
     print ":"
     input = gets.strip
     case input
+    when 'exit'
+      @exit = true
     when move_regex
       bearing = input.match(move_regex)[1]
       move(bearing)
@@ -65,6 +77,7 @@ class Game
     else
       last_location = @current_location.dup
       @current_location = update_coordinates(@current_location, bearing)
+      print @current_location
       if @map[@current_location].nil?
         @current_location = last_location
         puts "You've strayed too far! A helpful human put you back in the park."
@@ -76,7 +89,6 @@ class Game
     puts "You are at #{@current_location}."
     puts current_location_object.description
 
-    # If shop then show shop menu
     if current_location_object.breadcrumbs
       @inventory << :breadcrumb
     end
@@ -85,32 +97,67 @@ class Game
       shop
     end
 
+    if current_location_object.treetrunks
+      treetrunks
+    end
   end
 
-  def shop
-    puts "We have #{current_location_object.shop_inventory.count} lettuce for sale. One breadcrumb per leaf. Would you like to buy some? [y/n]"
-    print ":"
-    input = gets.strip
-    case input
-    when "y"
-      if @inventory.include?(:breadcrumb)
-        # delete one breadcrumb
-        index_to_delete = @inventory.index(:breadcrumb)
-        @inventory.delete_at(index_to_delete)
-
-        index_to_delete = current_location_object.shop_inventory.index(:lettuce)
-        current_location_object.shop_inventory.delete_at(index_to_delete)
-
-        @inventory << :lettuce
-        puts "You have purchased lettuce"
-      else
-        puts "You have no breadcrumbs! Better keep searching."
-      end
-    when "n"
-      puts "You don't want lettuce"
+  def treetrunks
+    if @inventory.include?(:apple)
+      index_to_delete = @inventory.index(:apple)
+      @inventory.delete_at(index_to_delete)
+      @inventory << :pie
+      puts "make pie"
     else
-      puts "That's not a vaild command! You're addled!"
-      shop
+      puts "say sorry you need an apple to trade for pie"
+    end
+  end
+
+
+  def shop
+    if current_location_object.shop_inventory.empty?
+      puts "There's nothing for sale at the moment"
+    else
+
+      counts = current_location_object.shop_inventory.inject({}) do |counts, item|
+        counts[item] = (counts[item] || 0) + 1
+        counts
+      end
+
+      puts "We have:"
+      counts.each do |item, count|
+        puts "  - #{item} (#{count})"
+      end
+
+      puts "Would you like to buy some? 1 breadcrumb per item. (Type 'buy [item]')"
+      print ":"
+      input = gets.strip
+
+      if match_data = input.match(/buy (.+)/)
+        input = match_data.captures.first
+      end
+
+      case
+      when current_location_object.shop_inventory.uniq.map(&:to_s).include?(input)
+        if @inventory.include?(:breadcrumb)
+          # delete one breadcrumb
+          index_to_delete = @inventory.index(:breadcrumb)
+          @inventory.delete_at(index_to_delete)
+
+          index_to_delete = current_location_object.shop_inventory.index(input.to_sym)
+          current_location_object.shop_inventory.delete_at(index_to_delete)
+
+          @inventory << input.to_sym
+          puts "You have purchased #{input}"
+        else
+          puts "You have no breadcrumbs! Better keep searching."
+        end
+      when input == "n"
+        puts "You don't want anything"
+      else
+        puts "That's not a vaild command! You're addled!"
+        shop
+      end
     end
   end
 

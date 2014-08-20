@@ -1,11 +1,12 @@
 class Location
-  attr_reader :description, :breadcrumbs, :shop_inventory
+  attr_reader :description, :breadcrumbs, :shop_inventory, :treetrunks
 
-  def initialize(description, breadcrumbs, shop_inventory, shop)
-    @description = description
-    @breadcrumbs = breadcrumbs
-    @shop_inventory = shop_inventory
-    @shop = shop
+  def initialize(options = {})
+    @description = options[:description] || 'Plain ole grass'
+    @breadcrumbs = options[:breadcrumbs]
+    @shop_inventory = options[:shop_inventory] || []
+    @shop = options[:shop]
+    @treetrunks = options[:treetrunks]
   end
 
   def shop?
