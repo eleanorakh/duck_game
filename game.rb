@@ -17,18 +17,12 @@ class Game
   end
 
   def run
-    set_name
+    @duck.set_name
 
     loop do
       break if @exit
       tick
     end
-  end
-
-  def set_name
-    puts "You're a fancy looking duck, what is your name?"
-    @name = gets.strip
-    puts "Hi #{@name}"
   end
 
   def tick
@@ -83,7 +77,7 @@ class Game
         @current_location = last_location
         puts "You've strayed too far! A helpful human put you back in the park."
       else
-        puts "You went #{bearing.upcase}, good work #{@name}."
+        puts "You went #{bearing.upcase}, good work #{@duck.name}."
       end
     end
 

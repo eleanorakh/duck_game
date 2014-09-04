@@ -1,6 +1,6 @@
 class Duck
   attr_accessor :health
-  attr_reader :inventory
+  attr_reader :inventory, :name
 
   DEFAULT_HEALTH = 50
 
@@ -25,4 +25,11 @@ class Duck
   def add_to_inventory(item_type)
     @inventory << item_type
   end
+
+  def set_name
+    puts "You're a fancy looking duck, what is your name?"
+    @name = gets.strip
+    puts "Hi #{@name}"
+  end
+
 end
