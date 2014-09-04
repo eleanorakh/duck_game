@@ -4,6 +4,7 @@ require_relative "duck"
 class Game
   DEFAULT_LOCATION = [0,0]
   INVENTORY_WIDTH = 2
+  INVENTORY_SIZE = 4
   #   0 1 2
   # 0 # # x
   # 1 # # x
@@ -13,7 +14,6 @@ class Game
     @map = Map.new(map_hash)
     @current_location = DEFAULT_LOCATION
     @duck = Duck.new
-    @inventory_size = 4
   end
 
   def run
@@ -178,7 +178,7 @@ class Game
   end
 
   def inventory_height
-    @inventory_size/INVENTORY_WIDTH
+    INVENTORY_SIZE/INVENTORY_WIDTH
   end
 
   def current_location_object
