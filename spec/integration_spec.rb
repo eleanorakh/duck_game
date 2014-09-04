@@ -16,9 +16,9 @@ describe 'how the game works' do
 
     })
 
-    see("You're a fancy looking duck, what is your name?")
-    enter("Ellie")
-    see("Hi Ellie")
+    duck = game.instance_variable_get('@duck')
+    expect(duck).to receive(:set_name)
+    duck.instance_variable_set('@name', 'Ellie')
     see(nil)
 
     see("What would you like to do?")

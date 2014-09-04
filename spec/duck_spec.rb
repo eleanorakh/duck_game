@@ -38,4 +38,14 @@ describe Duck do
       expect(duck.inventory).to eq [:apple, :pear]
     end
   end
+
+  describe '#set_name' do
+    it 'sets duck name' do
+      duck = Duck.new
+      expect(duck).to receive(:puts).with("You're a fancy looking duck, what is your name?")
+      allow(duck).to receive(:gets).and_return('Finn the Human')
+      expect(duck).to receive(:puts).with('Hi Finn the Human')
+      duck.set_name
+    end
+  end
 end
